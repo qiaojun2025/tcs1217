@@ -117,8 +117,8 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ agent, onBack }) => {
     }, 500);
   };
 
-  const endTask = () => {
-    const finalScore = taskState.score;
+  const endTask = (finalScoreOverride?: number) => {
+    const finalScore = finalScoreOverride !== undefined ? finalScoreOverride : taskState.score;
     const isQuick = taskState.type === TaskType.QUICK_JUDGMENT;
     
     // Update Stats
@@ -166,18 +166,23 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ agent, onBack }) => {
   const handleQuickJudgment = (selectedOption: string, correctOption: string) => {
     const isCorrect = selectedOption === correctOption;
     const newScore = taskState.score + (isCorrect ? 10 : 0);
+    const nextRound = taskState.currentRound + 1;
     
     setTaskState(prev => ({
       ...prev,
       score: newScore,
-      currentRound: prev.currentRound + 1
+      currentRound: nextRound
     }));
 
     addMessage('user', MessageType.TEXT, `我选择：${selectedOption}`);
     addMessage('agent', MessageType.TEXT, isCorrect ? `✅ 回答正确！贡献度 +10` : `❌ 回答错误。`);
 
     setTimeout(() => {
-      nextQuickTaskRound(taskState.currentRound + 1);
+      if (nextRound > 10) {
+        endTask(newScore);
+      } else {
+        nextQuickTaskRound(nextRound);
+      }
     }, 800);
   };
 
@@ -216,11 +221,12 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ agent, onBack }) => {
         const isCorrect = predictions.includes(target);
         
         const newScore = taskState.score + (isCorrect ? 10 : 0);
+        const nextRound = taskState.currentRound + 1;
         
         setTaskState(prev => ({
           ...prev,
           score: newScore,
-          currentRound: prev.currentRound + 1
+          currentRound: nextRound
         }));
 
         const feedback = isCorrect 
@@ -230,7 +236,11 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ agent, onBack }) => {
         addMessage('agent', MessageType.TEXT, feedback);
 
         setTimeout(() => {
-          nextCollectionTaskRound(taskState.currentRound + 1);
+          if (nextRound > 10) {
+            endTask(newScore);
+          } else {
+            nextCollectionTaskRound(nextRound);
+          }
         }, 1500);
       };
     }
