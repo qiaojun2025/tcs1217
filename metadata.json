@@ -1,0 +1,7 @@
+{
+  "name": "Task Center Agent",
+  "description": "A mobile-first intelligent agent task center featuring image recognition tasks using TensorFlow.js.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
