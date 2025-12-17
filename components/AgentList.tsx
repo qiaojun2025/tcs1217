@@ -23,8 +23,8 @@ const AgentList: React.FC<AgentListProps> = ({ onSelectAgent }) => {
   return (
     <div className="flex flex-col h-full bg-[#f2f2f6]">
       {/* Header */}
-      <div className="pt-12 pb-4 px-6 bg-white border-b border-gray-200">
-        <div className="flex justify-between items-center mb-6">
+      <div className="pt-6 pb-4 px-6 bg-white border-b border-gray-200">
+        <div className="flex justify-between items-center mb-2">
           <div className="text-sm text-blue-500 font-medium">智能体</div>
           <div className="text-gray-400"><Clock size={20} /></div>
         </div>

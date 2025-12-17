@@ -40,7 +40,11 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ agent, onBack }) => {
   // Initial Welcome Message
   useEffect(() => {
     if (messages.length === 0) {
-      addMessage('agent', MessageType.TEXT, `欢迎来到${agent.name}！\n我是你的任务助手。完成任务可以获取贡献度。\n\n请选择任务类型：`);
+      if (agent.id === 'task_center') {
+        addMessage('agent', MessageType.TEXT, `欢迎来到${agent.name}！\n我是你的任务助手。完成任务可以获取贡献度。\n\n请选择任务类型：`);
+      } else {
+        addMessage('agent', MessageType.TEXT, `欢迎来到${agent.name}！\n有什么可以帮您的吗？`);
+      }
     }
   }, [agent]);
 
@@ -364,7 +368,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ agent, onBack }) => {
 
       {/* Task Controls (Sticky Bottom) */}
       <div className="bg-white border-t border-gray-200 p-4 safe-area-bottom">
-        {!taskState.isActive ? (
+        {!taskState.isActive && agent.id === 'task_center' ? (
           <div className="grid grid-cols-3 gap-3">
             <button 
               onClick={() => startTask(TaskType.QUICK_JUDGMENT)}
@@ -388,7 +392,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ agent, onBack }) => {
               <span className="text-xs font-medium">我的统计</span>
             </button>
           </div>
-        ) : (
+        ) : taskState.isActive ? (
           <div className="flex items-center justify-between bg-blue-50 px-4 py-3 rounded-xl border border-blue-100">
             <div>
               <div className="text-xs text-blue-600 font-bold uppercase tracking-wider">
@@ -408,12 +412,12 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ agent, onBack }) => {
               退出
             </button>
           </div>
-        )}
+        ) : null}
         
         {/* Mock Input (Visual Only) */}
         {!taskState.isActive && (
-          <div className="mt-4 relative">
-             <input disabled type="text" placeholder="有什么可以帮你?" className="w-full bg-gray-100 text-gray-500 rounded-full py-2 px-4 focus:outline-none" />
+          <div className={`${agent.id === 'task_center' ? 'mt-4' : ''} relative`}>
+             <input disabled type="text" placeholder={agent.id === 'task_center' ? "有什么可以帮你?" : "仅供演示，无法输入"} className="w-full bg-gray-100 text-gray-500 rounded-full py-2 px-4 focus:outline-none" />
              <div className="absolute right-2 top-1.5 p-1 bg-gray-300 rounded-full text-white">
                <ArrowUp size={16} />
              </div>
